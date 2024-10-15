@@ -1,0 +1,24 @@
+name: projet
+description: Une description de votre projet
+
+publish_to: 'none'
+
+environment:
+  sdk: ">=2.12.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  qr_code_scanner: ^1.0.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true # Cela doit être un booléen
+  assets:
+    - assets/images/logo.png
+    - assets/images/scann.png
+    - assets/images/chek.jpeg
+    - assets/images/bk.png
