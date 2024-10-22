@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:projet/services/user_service.dart';
+
+import 'loginScreen.dart'; // Assurez-vous que ce fichier contient bien la bonne définition de login()
+
 class AdminScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -6,6 +10,21 @@ class AdminScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text('Admin - Gestion des Médicaments'),
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.logout),
+            onPressed: () async {
+              bool result = await logout();  // Assurez-vous que logout() renvoie bien un booléen
+              if (result) {
+                // Assurez-vous que login() est un widget de type page de connexion
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (context) => LoginScreen(onAuthenticated: (bool result) {})),
+                      (route) => false,
+                );
+              }
+            },
+          ),
+        ],
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
@@ -26,6 +45,7 @@ class AdminScreen extends StatelessWidget {
                   _buildDashboardTile(Icons.add, 'Médicaments Ajoutés', ''),
                   _buildDashboardTile(Icons.edit, 'Médicaments Modifiés', ''),
                   _buildDashboardTile(Icons.delete, 'Médicaments Supprimés', ''),
+                  _buildDashboardTile(Icons.details, ' Details Médicaments ', ''),
                 ],
               ),
               SizedBox(height: 20),
@@ -42,7 +62,9 @@ class AdminScreen extends StatelessWidget {
               SizedBox(height: 8),
               _buildActionTile(context, Icons.delete, 'Supprimer Médicament', '/deleteDrug'),
               SizedBox(height: 8),
-              _buildActionTile(context, Icons.medical_services, 'Vérifier Médicament', '/verifyDrug'),
+              _buildActionTile(context, Icons.medical_services, 'Vérifier Médicament', '/verifyDrugSreen'),
+              SizedBox(height: 8),
+              _buildActionTile(context, Icons.medical_services, 'Details Médicament', '/drugDetailScreen'),
             ],
           ),
         ),
@@ -51,16 +73,14 @@ class AdminScreen extends StatelessWidget {
   }
 
   // Widget pour afficher une tuile du tableau de bord
-  Widget _buildDashboardTile(IconData icon, String title, String route) {
+  Widget _buildDashboardTile(IconData icon, String title, String count) {
     return Card(
       elevation: 5,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: InkWell(
         onTap: () {
           // Navigation vers la page correspondante
-          if (route.isNotEmpty) {
-            Navigator.pushNamed;
-          }
+          // Si un chemin est défini, on peut l'utiliser ici
         },
         child: Container(
           width: 100,
@@ -100,26 +120,4 @@ class AdminScreen extends StatelessWidget {
       ),
     );
   }
-}
-
-Widget _buildDashboardTile(IconData icon, String label, String count) {
-  return Column(
-    children: [
-      Icon(icon, size: 40, color: Colors.green),
-      SizedBox(height: 8),
-      Text(label, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-      Text(count, style: TextStyle(fontSize: 16)),
-    ],
-  );
-}
-
-Widget _buildActionTile(BuildContext context, IconData icon, String label, String route) {
-  return ListTile(
-    leading: Icon(icon, size: 40, color: Colors.green),
-    title: Text(label, style: TextStyle(fontSize: 18)),
-    trailing: Icon(Icons.arrow_forward_ios, color: Colors.green),
-    onTap: () {
-      Navigator.pushNamed(context, route);
-    },
-  );
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 class RegisterScreen extends StatelessWidget {
   final Function(bool) onAuthenticated;
 
@@ -17,12 +18,12 @@ class RegisterScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset(
-              'images/logo.png',
+              'assets/images/logo.png', // Assurez-vous que le chemin est correct
               height: MediaQuery.of(context).size.height * 0.15,
             ),
             SizedBox(height: MediaQuery.of(context).size.height * 0.02),
             Container(
-              margin: const EdgeInsets.symmetric(vertical: 10.0), // Ajoute une marge verticale entre les champs
+              margin: const EdgeInsets.symmetric(vertical: 10.0),
               child: TextField(
                 decoration: InputDecoration(
                   labelText: 'Nom d\'utilisateur',
@@ -31,7 +32,7 @@ class RegisterScreen extends StatelessWidget {
               ),
             ),
             Container(
-              margin: const EdgeInsets.symmetric(vertical: 10.0), // Ajoute une marge verticale entre les champs
+              margin: const EdgeInsets.symmetric(vertical: 10.0),
               child: TextField(
                 decoration: InputDecoration(
                   labelText: 'Email',
@@ -40,7 +41,7 @@ class RegisterScreen extends StatelessWidget {
               ),
             ),
             Container(
-              margin: const EdgeInsets.symmetric(vertical: 10.0), // Ajoute une marge verticale entre les champs
+              margin: const EdgeInsets.symmetric(vertical: 10.0),
               child: TextField(
                 decoration: InputDecoration(
                   labelText: 'Mot de passe',
@@ -50,7 +51,7 @@ class RegisterScreen extends StatelessWidget {
               ),
             ),
             Container(
-              margin: const EdgeInsets.symmetric(vertical: 10.0), // Ajoute une marge verticale entre les champs
+              margin: const EdgeInsets.symmetric(vertical: 10.0),
               child: TextField(
                 decoration: InputDecoration(
                   labelText: 'Confirmer mot de passe',
@@ -62,14 +63,25 @@ class RegisterScreen extends StatelessWidget {
             SizedBox(height: MediaQuery.of(context).size.height * 0.02),
             ElevatedButton(
               onPressed: () {
-                // Assume registration logic here
-                bool admin = false; // Placeholder logic
-                onAuthenticated(admin);
+                // Logique d'inscription fictive
+                bool admin = false; // Remplacez par votre logique d'inscription
+                onAuthenticated(admin); // Appelle le callback pour informer l'authentification
               },
               child: Text(
                 'S\'inscrire',
                 style: TextStyle(color: Colors.white),
               ),
+            ),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+            TextButton(
+              onPressed: () {
+                // Rediriger vers la page de connexion si nécessaire
+                Navigator.of(context).pop(); // Retour à l'écran précédent (LoginScreen)
+              },
+              child: Text('Déjà inscrit ? Connexion ici',
+                style: TextStyle(color: Colors.white),
+              ),
+
             ),
           ],
         ),

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-
+import 'package:projet/drugDetailScreen.dart';
+import 'package:projet/models/api_response.dart';
 import 'package:projet/registerScreen.dart';
 import 'package:projet/searchScreen.dart';
+import 'package:projet/verifyDrugScreen.dart'; // Ajoutez l'importation ici
 import 'scannerScreen.dart';
 import 'adminScreen.dart';
 import 'authScreen.dart';
@@ -10,8 +12,8 @@ import 'deleteDrugScreen.dart';
 import 'editDrugScreen.dart';
 import 'loginScreen.dart';
 import 'mainScreen.dart';
-import 'package:qr_code_scanner/qr_code_scanner.dart';
 
+import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 void main() {
   runApp(MyApp());
@@ -36,7 +38,6 @@ class _MyAppState extends State<MyApp> {
         inputDecorationTheme: InputDecorationTheme(
           enabledBorder: OutlineInputBorder(
             borderSide: BorderSide(color: Colors.green),
-
           ),
           focusedBorder: OutlineInputBorder(
             borderSide: BorderSide(color: Colors.green),
@@ -44,7 +45,6 @@ class _MyAppState extends State<MyApp> {
           labelStyle: TextStyle(color: Colors.black),
           prefixIconColor: Colors.green,
         ),
-
         bottomNavigationBarTheme: BottomNavigationBarThemeData(
           selectedItemColor: Colors.green,
           unselectedItemColor: Colors.green,
@@ -55,20 +55,18 @@ class _MyAppState extends State<MyApp> {
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.green,
             padding: EdgeInsets.symmetric(horizontal: 40.0, vertical: 12.0),
-            textStyle: TextStyle(color: Colors.white), // Set button text color to white
+            textStyle: TextStyle(color: Colors.white),
           ),
         ),
         textButtonTheme: TextButtonThemeData(
           style: TextButton.styleFrom(
             backgroundColor: Colors.green,
-            // Set button text color to white
           ),
         ),
       ),
       initialRoute: '/',
       routes: {
         '/': (context) => isAuthenticated
-
             ? MainScreen(isAdmin: isAdmin)
             : AuthScreen(onAuthenticated: (admin) {
           setState(() {
@@ -93,7 +91,6 @@ class _MyAppState extends State<MyApp> {
         }),
         '/main': (context) => MainScreen(isAdmin: isAdmin),
         '/search': (context) => SearchScreen(),
-        //'/scanner': (context) => ScannerScreen(),
         '/admin': (context) => isAuthenticated && isAdmin
             ? AdminScreen()
             : AuthScreen(onAuthenticated: (admin) {
@@ -106,7 +103,8 @@ class _MyAppState extends State<MyApp> {
         '/addDrug': (context) => AddDrugScreen(),
         '/editDrug': (context) => EditDrugScreen(),
         '/deleteDrug': (context) => DeleteDrugScreen(),
-        '/verifieDrug': (context) => DeleteDrugScreen(),
+        '/verifieDrug': (context) => VerifyDrugScreen(), // Corrigé ici
+        '/drugDetailScreen': (context) => DrugDetailScreen(drugId: ''),
         '/scanner': (context) => ScannerScreen(),
       },
     );
