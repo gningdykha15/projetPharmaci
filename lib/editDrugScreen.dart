@@ -44,7 +44,7 @@ class _EditDrugScreenState extends State<EditDrugScreen> {
 
     // Requête PUT ou PATCH à l'API pour mettre à jour le médicament
     final response = await http.put(
-      Uri.parse('http://tonapi.com/api/medicaments/$barcode'), // Modifier l'URL selon l'API Laravel
+      Uri.parse('http://127.0.0.1:8000/medicaments/$barcode'), // Modifier l'URL selon l'API Laravel
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(body),
     );
@@ -65,55 +65,65 @@ class _EditDrugScreenState extends State<EditDrugScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Modifier un Médicament'),
+        title: Text('Modifier un Médicament', style: TextStyle(color: Colors.white)),
         centerTitle: true,
+        backgroundColor: Colors.green, // Couleur de l'AppBar en vert
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            TextField(
-              controller: _nameController,
-              decoration: InputDecoration(labelText: 'Nom du médicament'),
-            ),
+            _buildTextField(_nameController, 'Nom du médicament'),
             SizedBox(height: 20),
-            TextField(
-              controller: _barcodeController,
-              decoration: InputDecoration(labelText: 'Code-barres du médicament'),
-            ),
+            _buildTextField(_barcodeController, 'Code-barres du médicament'),
             SizedBox(height: 20),
-            TextField(
-              controller: _manufacturerController,
-              decoration: InputDecoration(labelText: 'Fabricant'),
-            ),
+            _buildTextField(_manufacturerController, 'Fabricant'),
             SizedBox(height: 20),
-            TextField(
-              controller: _manufactureDateController,
-              decoration: InputDecoration(labelText: 'Date de fabrication'),
-            ),
+            _buildTextField(_manufactureDateController, 'Date de fabrication'),
             SizedBox(height: 20),
-            TextField(
-              controller: _expiryDateController,
-              decoration: InputDecoration(labelText: 'Date d\'expiration'),
-            ),
+            _buildTextField(_expiryDateController, 'Date d\'expiration'),
             SizedBox(height: 20),
-            TextField(
-              controller: _descriptionController,
-              decoration: InputDecoration(labelText: 'Description'),
-            ),
+            _buildTextField(_descriptionController, 'Description'),
             SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                editDrug(); // Appelle la fonction pour modifier le médicament
-              },
-              child: Text(
-                'Modifier',
-                style: TextStyle(color: Colors.white),
+            Center(
+              child: ElevatedButton(
+                onPressed: () {
+                  editDrug(); // Appelle la fonction pour modifier le médicament
+                },
+                style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green, // Arrière-plan vert pour le bouton
+
+                  padding: EdgeInsets.symmetric(horizontal: 30, vertical: 12),
+                ),
+                child: Text(
+                  'Modifier',
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildTextField(TextEditingController controller, String label) {
+    return TextField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: TextStyle(color: Colors.green), // Couleur verte pour le label
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(color: Colors.green), // Couleur verte pour le contour
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(color: Colors.green), // Couleur verte pour le contour
+        ),
+      ),
+      style: TextStyle(color: Colors.green), // Couleur verte pour le texte
     );
   }
 }

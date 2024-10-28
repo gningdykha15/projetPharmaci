@@ -1,119 +1,135 @@
 import 'package:flutter/material.dart';
-import 'package:projet/services/user_service.dart';
 
-import 'loginScreen.dart'; // Assurez-vous que ce fichier contient bien la bonne définition de login()
+class AdminScreen extends StatefulWidget {
+  @override
+  _AdminScreenState createState() => _AdminScreenState();
+}
 
-class AdminScreen extends StatelessWidget {
+class _AdminScreenState extends State<AdminScreen> {
+  int _selectedIndex = 0;
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+
+    switch (index) {
+      case 0:
+        Navigator.pushNamed(context, '/home');
+        break;
+      case 1:
+        Navigator.pushNamed(context, '/search');
+        break;
+      case 2:
+        Navigator.pushNamed(context, '/scanner');
+        break;
+      case 3:
+        Navigator.pushNamed(context, '/admin');
+        break;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Admin - Gestion des Médicaments'),
         centerTitle: true,
-        actions: [
-          IconButton(
-            icon: Icon(Icons.logout),
-            onPressed: () async {
-              bool result = await logout();  // Assurez-vous que logout() renvoie bien un booléen
-              if (result) {
-                // Assurez-vous que login() est un widget de type page de connexion
-                Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (context) => LoginScreen(onAuthenticated: (bool result) {})),
-                      (route) => false,
-                );
-              }
-            },
-          ),
-        ],
       ),
       body: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Tableau de bord
-              Text(
-                'Tableau de bord',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  _buildDashboardTile(Icons.medical_services, 'Médicaments Vérifiés', ''),
-                  _buildDashboardTile(Icons.add, 'Médicaments Ajoutés', ''),
-                  _buildDashboardTile(Icons.edit, 'Médicaments Modifiés', ''),
-                  _buildDashboardTile(Icons.delete, 'Médicaments Supprimés', ''),
-                  _buildDashboardTile(Icons.details, ' Details Médicaments ', ''),
-                ],
-              ),
-              SizedBox(height: 20),
-
-              // Actions
-              Text(
-                'Actions',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 16),
-              _buildActionTile(context, Icons.add, 'Ajouter Médicament', '/addDrug'),
-              SizedBox(height: 8),
-              _buildActionTile(context, Icons.edit, 'Modifier Médicament', '/editDrug'),
-              SizedBox(height: 8),
-              _buildActionTile(context, Icons.delete, 'Supprimer Médicament', '/deleteDrug'),
-              SizedBox(height: 8),
-              _buildActionTile(context, Icons.medical_services, 'Vérifier Médicament', '/verifyDrugSreen'),
-              SizedBox(height: 8),
-              _buildActionTile(context, Icons.medical_services, 'Details Médicament', '/drugDetailScreen'),
-            ],
-          ),
+        padding: EdgeInsets.all(8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Tableau de bord',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _buildDashboardTile(Icons.medical_services, 'Médicaments Vérifiés', ''),
+                _buildDashboardTile(Icons.add, 'Médicaments Ajoutés', ''),
+                _buildDashboardTile(Icons.edit, 'Médicaments Modifiés', ''),
+                _buildDashboardTile(Icons.delete, 'Médicaments Supprimés', ''),
+              ],
+            ),
+            SizedBox(height: 15),
+            Text(
+              'Actions',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 10),
+            _buildActionTile(context, Icons.add, 'Ajouter Medicament', '/addDrug'),
+            _buildActionTile(context, Icons.edit, 'Modifier Medicament', '/editDrug'),
+            _buildActionTile(context, Icons.delete, 'Supprimer Medicament', '/deleteDrug'),
+            _buildActionTile(context, Icons.medical_services, 'Verifier Medicament', '/verifyDrugScreen'),
+            _buildActionTile(context, Icons.medical_services, 'Details Medicament', '/drugDetailScreen'),
+          ],
         ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Accueil',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.search),
+            label: 'Recherche',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.qr_code_scanner),
+            label: 'Scanner',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.admin_panel_settings),
+            label: 'Admin',
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Colors.green,
+        unselectedItemColor: Colors.green,
+        onTap: _onItemTapped,
       ),
     );
   }
 
-  // Widget pour afficher une tuile du tableau de bord
   Widget _buildDashboardTile(IconData icon, String title, String count) {
     return Card(
       elevation: 5,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: InkWell(
-        onTap: () {
-          // Navigation vers la page correspondante
-          // Si un chemin est défini, on peut l'utiliser ici
-        },
-        child: Container(
-          width: 100,
-          height: 100,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(icon, size: 40, color: Colors.green),
-              SizedBox(height: 8),
-              Text(
-                title,
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-              ),
-            ],
-          ),
+      child: Container(
+        width: 80,
+        height: 80,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, size: 30, color: Colors.green),
+            SizedBox(height: 4),
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  // Widget pour afficher une tuile d'action
   Widget _buildActionTile(BuildContext context, IconData icon, String title, String route) {
     return Card(
-      elevation: 5,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 3,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       child: ListTile(
-        leading: Icon(icon, color: Colors.green, size: 32),
+        leading: Icon(icon, color: Colors.green, size: 24),
         title: Text(
           title,
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
         ),
-        trailing: Icon(Icons.arrow_forward_ios),
+        trailing: Icon(Icons.arrow_forward_ios, size: 18),
         onTap: () {
           Navigator.pushNamed(context, route);
         },

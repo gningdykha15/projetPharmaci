@@ -69,7 +69,7 @@ class _DrugDetailScreenState extends State<DrugDetailScreen> {
   // Fonction pour récupérer les détails du médicament depuis l'API
   Future<void> fetchDrugDetails() async {
     try {
-      final response = await http.get(Uri.parse('http://tonapi.com/api/medicaments/${widget.drugId}'));
+      final response = await http.get(Uri.parse('http://127.0.0.1:8000/medicaments/${widget.drugId}'));
 
       if (response.statusCode == 200) {
         // Si la requête est réussie, on récupère et décode le JSON

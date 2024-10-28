@@ -1,12 +1,10 @@
-import 'dart:convert';
+  import 'dart:convert';
 
 import 'package:projet/constant.dart';
 import 'package:projet/models/api_response.dart';
 import 'package:http/http.dart' as http;
 import 'package:projet/models/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-
 
 //login
 Future<ApiResponse> login(String email, String password) async {

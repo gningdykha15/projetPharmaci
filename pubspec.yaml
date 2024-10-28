@@ -4,21 +4,24 @@ description: Une description de votre projet
 publish_to: 'none'
 
 environment:
-  sdk: ">=2.12.0 <3.0.0"
+  sdk: ">=3.4.3 <4.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
+  http: ^0.13.3 
+  shared_preferences: ^2.0.6 
   qr_code_scanner: ^1.0.1
-  http: ^0.13.3
-  shared_preferences: ^2.0.6
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_lints: ^2.0.0
+  
+
 
 flutter:
-  uses-material-design: true # Cela doit être un booléen
+  uses-material-design: true
   assets:
     - assets/images/logo.png
     - assets/images/scann.png

@@ -35,7 +35,7 @@ class _BarcodeScannerState extends State<ScannerScreen> {
 
     controller.scannedDataStream.listen((scanData) {
       setState(() {
-        scannedBarcode = scanData as String?;
+        scannedBarcode = scanData.code;
       });
       // Vous pouvez également naviguer vers une page de détails ici
       // Navigator.pushNamed(context, '/drugDetails', arguments: scannedBarcode);

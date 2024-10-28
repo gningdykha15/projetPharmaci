@@ -1,91 +1,127 @@
 import 'package:flutter/material.dart';
+import 'package:projet/homeScreen.dart';
+import 'package:projet/models/api_response.dart';
+import 'package:projet/models/user.dart';
+import 'package:projet/services/user_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../constant.dart';
+import 'loginScreen.dart';
+class Register extends StatefulWidget {
+  @override
+  _RegisterState createState() => _RegisterState();
+}
 
-class RegisterScreen extends StatelessWidget {
-  final Function(bool) onAuthenticated;
+class _RegisterState extends State<Register> {
+  GlobalKey<FormState> formkey = GlobalKey<FormState>();
+  bool loading = false;
+  TextEditingController nameController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+  TextEditingController passwordConfirmController = TextEditingController();
 
-  RegisterScreen({required this.onAuthenticated});
+  void _RegisterUser() async {
+    setState(() {
+      loading = true;
+    });
+
+    ApiResponse response = await register(nameController.text, emailController.text, passwordController.text);
+    
+    setState(() {
+      loading = false;
+    });
+
+    if (response.error == null) {
+      _saveAndRedirectToHome(response.data as User);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('${response.error}'),
+      ));
+    }
+  }
+
+  // Save and redirect to home
+  void _saveAndRedirectToHome(User user) async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    await pref.setString('token', user.token ?? '');
+    await pref.setInt('userId', user.id ?? 0);
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => HomeScreen()), (route) => false);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Inscription'),
+        title: Text('Inscrire'),
         centerTitle: true,
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20.0), // Ajoute des marges horizontales globales
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+      body: Form(
+        key: formkey,
+        child: ListView(
+          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 32),
           children: [
-            Image.asset(
-              'assets/images/logo.png', // Assurez-vous que le chemin est correct
-              height: MediaQuery.of(context).size.height * 0.15,
+            TextFormField(
+              controller: nameController,
+              validator: (val) => val!.isEmpty ? 'Nom invalide' : null,
+              decoration: KInputDecoration('Nom'),
             ),
-            SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-            Container(
-              margin: const EdgeInsets.symmetric(vertical: 10.0),
-              child: TextField(
-                decoration: InputDecoration(
-                  labelText: 'Nom d\'utilisateur',
-                  prefixIcon: Icon(Icons.person),
-                ),
-              ),
+            SizedBox(
+              height: 20,
             ),
-            Container(
-              margin: const EdgeInsets.symmetric(vertical: 10.0),
-              child: TextField(
-                decoration: InputDecoration(
-                  labelText: 'Email',
-                  prefixIcon: Icon(Icons.email),
-                ),
-              ),
+            TextFormField(
+              controller: emailController,
+              validator: (val) => val!.isEmpty ? 'Adresse email invalide' : null,
+              decoration: KInputDecoration('Email'),
             ),
-            Container(
-              margin: const EdgeInsets.symmetric(vertical: 10.0),
-              child: TextField(
-                decoration: InputDecoration(
-                  labelText: 'Mot de passe',
-                  prefixIcon: Icon(Icons.lock),
-                ),
-                obscureText: true,
-              ),
+            SizedBox(
+              height: 20,
             ),
-            Container(
-              margin: const EdgeInsets.symmetric(vertical: 10.0),
-              child: TextField(
-                decoration: InputDecoration(
-                  labelText: 'Confirmer mot de passe',
-                  prefixIcon: Icon(Icons.lock),
-                ),
-                obscureText: true,
-              ),
+            TextFormField(
+              controller: passwordController,
+              obscureText: true,
+              validator: (val) =>
+                  val!.length < 6 ? 'Au moins 6 caractères requis' : null,
+              decoration: KInputDecoration('Mot de passe'),
             ),
-            SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-            ElevatedButton(
-              onPressed: () {
-                // Logique d'inscription fictive
-                bool admin = false; // Remplacez par votre logique d'inscription
-                onAuthenticated(admin); // Appelle le callback pour informer l'authentification
+            SizedBox(
+              height: 20,
+            ),
+            TextFormField(
+              controller: passwordConfirmController,
+              obscureText: true,
+              validator: (val) {
+                if (val != passwordController.text) {
+                  return 'La confirmation du mot de passe ne correspond pas';
+                }
+                return null;
               },
-              child: Text(
-                'S\'inscrire',
-                style: TextStyle(color: Colors.white),
-              ),
+              decoration: KInputDecoration('Confirmation du mot de passe'),
             ),
-            SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-            TextButton(
-              onPressed: () {
-                // Rediriger vers la page de connexion si nécessaire
-                Navigator.of(context).pop(); // Retour à l'écran précédent (LoginScreen)
-              },
-              child: Text('Déjà inscrit ? Connexion ici',
-                style: TextStyle(color: Colors.white),
-              ),
-
+            SizedBox(
+              height: 20,
             ),
+            loading
+                ? Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : KTextButton('Inscrire', () {
+                    if (formkey.currentState!.validate()) {
+                      _RegisterUser();
+                    }
+                  }),
+            SizedBox(
+              height: 10,
+            ),
+            KLoginRegister(
+                "Vous avez déjà un compte sur cette plateforme ?", 'Se connecter',
+                () {
+              Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (context) => Login()),
+                  (route) => false);
+            })
           ],
         ),
-      ),
-    );
-  }
+     ),
+);
+}
 }

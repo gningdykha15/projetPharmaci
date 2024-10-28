@@ -1,6 +1,4 @@
 // lib/models/medicament.dart
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 
 class Medicament {
   final String id;

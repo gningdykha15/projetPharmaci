@@ -8,44 +8,54 @@ class AddDrugScreen extends StatefulWidget {
 }
 
 class _AddDrugScreenState extends State<AddDrugScreen> {
-  // Controllers pour capturer les données saisies par l'utilisateur
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _codeBarreController = TextEditingController();
   final TextEditingController _fabricantController = TextEditingController();
-  final TextEditingController _dateFabricationController = TextEditingController();
   final TextEditingController _dateExpirationController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
 
-  // Fonction pour envoyer les données à l'API (Laravel)
+  bool _isLoading = false; // Variable pour suivre l'état de chargement
+
   Future<void> addDrug() async {
-    // Les données à envoyer à l'API
+    setState(() {
+      _isLoading = true; // Activer le chargement
+    });
+
     final Map<String, dynamic> drugData = {
       'nom': _nameController.text,
-      'code_barre': _codeBarreController.text,
       'fabricant': _fabricantController.text,
-      'date_fabrication': _dateFabricationController.text,
       'date_expiration': _dateExpirationController.text,
       'description': _descriptionController.text,
     };
 
-    // Envoyer une requête POST à l'API
-    final response = await http.post(
-      Uri.parse('http://tonapi.com/api/medicaments'), // Remplace avec l'URL correcte de ton API
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(drugData),
-    );
+    try {
+      final response = await http.post(
+        Uri.parse('http://127.0.0.1:8000/medicaments/create'), // Remplace avec l'URL correcte de ton API
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(drugData),
+      );
 
-    // Vérifier si la requête a réussi
-    if (response.statusCode == 201) {
-      // Si la requête a réussi, afficher un message de succès
+      if (response.statusCode == 201) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Médicament ajouté avec succès !')),
+        );
+        // Réinitialiser les champs après ajout réussi
+        _nameController.clear();
+        _fabricantController.clear();
+        _dateExpirationController.clear();
+        _descriptionController.clear();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Échec de l\'ajout du médicament.')),
+        );
+      }
+    } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Médicament ajouté avec succès !')),
+        SnackBar(content: Text('Une erreur s\'est produite.')),
       );
-    } else {
-      // En cas d'échec, afficher un message d'erreur
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Échec de l\'ajout du médicament.')),
-      );
+    } finally {
+      setState(() {
+        _isLoading = false; // Désactiver le chargement
+      });
     }
   }
 
@@ -53,57 +63,84 @@ class _AddDrugScreenState extends State<AddDrugScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Ajouter un Médicament'),
+        title: Text('Ajouter un Médicament', style: TextStyle(color: Colors.white)),
         centerTitle: true,
+        backgroundColor: Colors.green,
+        leading: Icon(Icons.arrow_back, color: Colors.white), // Icône flèche en vert
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
         child: SingleChildScrollView(
-          child: Column(
-            children: [
-              TextField(
-                controller: _nameController,
-                decoration: InputDecoration(labelText: 'Nom du médicament'),
-              ),
-              SizedBox(height: 20),
-              TextField(
-                controller: _codeBarreController,
-                decoration: InputDecoration(labelText: 'Code-barres du médicament'),
-              ),
-              SizedBox(height: 20),
-              TextField(
-                controller: _fabricantController,
-                decoration: InputDecoration(labelText: 'Fabricant'),
-              ),
-              SizedBox(height: 20),
-              TextField(
-                controller: _dateFabricationController,
-                decoration: InputDecoration(labelText: 'Date de fabrication'),
-              ),
-              SizedBox(height: 20),
-              TextField(
-                controller: _dateExpirationController,
-                decoration: InputDecoration(labelText: 'Date d\'expiration'),
-              ),
-              SizedBox(height: 20),
-              TextField(
-                controller: _descriptionController,
-                decoration: InputDecoration(labelText: 'Description'),
-              ),
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  addDrug(); // Appeler la fonction pour ajouter le médicament
-                },
-                child: Text(
-                  'Ajouter',
-                  style: TextStyle(color: Colors.white),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.green.withOpacity(0.2),
+                  spreadRadius: 5,
+                  blurRadius: 10,
+                  offset: Offset(0, 5),
                 ),
-              ),
-            ],
+              ],
+            ),
+            padding: EdgeInsets.all(24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Veuillez remplir les informations suivantes :',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.green),
+                ),
+                SizedBox(height: 20),
+                _buildTextField(_nameController, 'Nom du médicament'),
+                SizedBox(height: 20),
+                _buildTextField(_fabricantController, 'Fabricant'),
+                SizedBox(height: 20),
+                _buildTextField(_dateExpirationController, 'Date d\'expiration (YYYY-MM-DD)'),
+                SizedBox(height: 20),
+                _buildTextField(_descriptionController, 'Description'),
+                SizedBox(height: 30),
+                Center(
+                  child: ElevatedButton(
+                    onPressed: _isLoading ? null : () => addDrug(),
+                    style: ElevatedButton.styleFrom(
+                     backgroundColor: Colors.green, // Arrière-plan vert pour le bouton
+
+                      padding: EdgeInsets.symmetric(horizontal: 30, vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: _isLoading
+                        ? CircularProgressIndicator(color: Colors.green)
+                        : Text('Ajouter', style: TextStyle(color: Colors.white, fontSize: 16)),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildTextField(TextEditingController controller, String label) {
+    return TextField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: TextStyle(color: Colors.green),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(color: Colors.green), // Couleur verte pour le contour
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(color: Colors.green), // Couleur verte pour le contour
+        ),
+      ),
+      style: TextStyle(color: Colors.green),
     );
   }
 }
